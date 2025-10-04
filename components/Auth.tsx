@@ -1,7 +1,4 @@
-
 import React from 'react';
-import { GoogleIcon, FacebookIcon, XIcon } from './icons/SocialIcons';
-import { CircuitBoardIcon } from './icons/AppIcons';
 
 interface AuthProps {
   onLogin: () => void;
@@ -15,60 +12,66 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-100 p-4">
-      <div className="w-full max-w-sm mx-auto overflow-hidden bg-base-200 rounded-lg shadow-xl">
-        <div className="px-6 py-8">
-          <div className="flex justify-center mx-auto text-brand-primary">
-            <CircuitBoardIcon />
+      <div className="w-full max-w-sm mx-auto border-2 border-content-100 rounded-lg p-8 shadow-[8px_8px_0_0_#111827]">
+        <h3 className="text-3xl font-bold text-center text-content-100 tracking-widest uppercase">
+          Login
+        </h3>
+
+        <form onSubmit={handleAuthAction} className="mt-8">
+          <div className="mb-6">
+            <label className="block text-content-100 text-sm font-bold tracking-wider uppercase mb-2" htmlFor="email">
+              Email
+            </label>
+            <input
+              id="email"
+              className="w-full px-4 py-3 text-content-100 bg-base-100 border-2 border-content-100 focus:outline-none focus:ring-2 focus:ring-content-100"
+              type="email"
+              placeholder="your@email.com"
+              defaultValue="demo@example.com"
+            />
           </div>
 
-          <h3 className="mt-3 text-2xl font-bold text-center text-content-100">Welcome Back</h3>
-          <p className="mt-1 text-center text-content-200">Login or sign up to continue</p>
-
-          <form onSubmit={handleAuthAction}>
-            <div className="w-full mt-6">
-              <input 
-                className="w-full px-4 py-3 text-content-100 bg-base-300 border-base-300 rounded-md focus:border-brand-primary focus:ring-brand-primary focus:ring-opacity-40 focus:outline-none focus:ring" 
-                type="email" 
-                placeholder="Email Address" 
-                aria-label="Email Address"
-                defaultValue="demo@example.com"
-              />
-            </div>
-
-            <div className="w-full mt-4">
-              <input 
-                className="w-full px-4 py-3 text-content-100 bg-base-300 border-base-300 rounded-md focus:border-brand-primary focus:ring-brand-primary focus:ring-opacity-40 focus:outline-none focus:ring" 
-                type="password" 
-                placeholder="Password" 
-                aria-label="Password" 
-                defaultValue="password"
-              />
-            </div>
-
-            <div className="flex items-center justify-between mt-6">
-              <a href="#" className="text-sm text-content-200 hover:text-brand-primary">Forget Password?</a>
-
-              <button 
-                type="submit"
-                className="px-6 py-2 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-brand-primary rounded-lg hover:bg-brand-secondary focus:outline-none focus:ring focus:ring-brand-secondary focus:ring-opacity-50"
-              >
-                Sign In
-              </button>
-            </div>
-          </form>
-
-          <div className="flex items-center justify-between mt-6">
-            <span className="w-1/5 border-b border-base-300 lg:w-1/4"></span>
-            <p className="text-xs text-center text-content-200 uppercase">or login with</p>
-            <span className="w-1/5 border-b border-base-300 lg:w-1/4"></span>
+          <div className="mb-6">
+            <label className="block text-content-100 text-sm font-bold tracking-wider uppercase mb-2" htmlFor="password">
+              Password
+            </label>
+            <input
+              id="password"
+              className="w-full px-4 py-3 text-content-100 bg-base-100 border-2 border-content-100 focus:outline-none focus:ring-2 focus:ring-content-100"
+              type="password"
+              placeholder="••••••••"
+              defaultValue="password"
+            />
           </div>
 
-          <div className="flex justify-center mt-4 gap-4">
-            <button onClick={onLogin} className="p-2 text-content-200 bg-base-300 rounded-full hover:bg-base-100 transition-colors duration-200"><GoogleIcon /></button>
-            <button onClick={onLogin} className="p-2 text-content-200 bg-base-300 rounded-full hover:bg-base-100 transition-colors duration-200"><FacebookIcon /></button>
-            <button onClick={onLogin} className="p-2 text-content-200 bg-base-300 rounded-full hover:bg-base-100 transition-colors duration-200"><XIcon /></button>
+          <div className="mt-8">
+            <button
+              type="submit"
+              className="w-full px-6 py-3 text-lg font-bold tracking-wider text-content-100 uppercase bg-brand-primary border-2 border-content-100 hover:bg-brand-secondary transition-colors"
+            >
+              Sign In
+            </button>
           </div>
+        </form>
+
+        <div className="flex items-center justify-between mt-8">
+          <span className="w-1/3 border-b border-content-100"></span>
+          <p className="text-xs text-center text-content-100 uppercase">Or</p>
+          <span className="w-1/3 border-b border-content-100"></span>
         </div>
+
+        <div className="flex justify-center mt-6 gap-4">
+          <button onClick={onLogin} className="flex items-center justify-center w-12 h-12 text-content-100 border-2 border-content-100 hover:bg-gray-100 font-bold">G</button>
+          <button onClick={onLogin} className="flex items-center justify-center w-12 h-12 text-content-100 border-2 border-content-100 hover:bg-gray-100 font-bold">F</button>
+          <button onClick={onLogin} className="flex items-center justify-center w-12 h-12 text-content-100 border-2 border-content-100 hover:bg-gray-100 font-bold">X</button>
+        </div>
+        
+        <p className="mt-8 text-center text-sm text-content-200">
+          Don't have an account?{' '}
+          <a href="#" className="font-bold text-content-100 underline hover:text-brand-primary">
+            Sign up
+          </a>
+        </p>
       </div>
     </div>
   );
