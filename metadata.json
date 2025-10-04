@@ -1,0 +1,7 @@
+{
+  "name": "Electronic Component Identifier",
+  "description": "A mobile-friendly web application that allows users to capture images of electronic components and automatically identify them using the Gemini API. The app provides detailed information about the component, including its type, specifications, and common uses.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
