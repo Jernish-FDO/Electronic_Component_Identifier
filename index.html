@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Electronic Component Identifier</title>
     
-    <!-- Google Font for monospaced look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -20,14 +19,13 @@
               sans: ['Roboto Mono', 'monospace'],
             },
             colors: {
-              // New Theme Colors
-              'brand-primary': '#f87171', // A nice salmon/red color like in the image
-              'brand-secondary': '#ef4444', // A slightly darker version for hover
-              'base-100': '#ffffff', // Main background is now white
-              'base-200': '#ffffff', // Card background is also white
-              'base-300': '#e5e7eb', // A light gray for borders or subtle backgrounds
-              'content-100': '#111827', // Primary text is now dark gray/black
-              'content-200': '#6b7280', // Secondary text is a medium gray
+              'brand-primary': '#f87171', 
+              'brand-secondary': '#ef4444',
+              'base-100': '#ffffff',
+              'base-200': '#f9fafb',
+              'base-300': '#e5e7eb',
+              'content-100': '#111827',
+              'content-200': '#6b7280',
             },
           },
         },
@@ -36,10 +34,14 @@
   <script type="importmap">
 {
   "imports": {
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.22.0",
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/"
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.22.0",
+
+    "firebase/app": "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js",
+    "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js",
+    "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js"
   }
 }
 </script>

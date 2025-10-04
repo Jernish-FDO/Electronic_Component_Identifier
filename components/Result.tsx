@@ -1,13 +1,13 @@
 import React from 'react';
 import { ComponentData } from '../types';
-import { ExternalLinkIcon } from './icons/AppIcons'; // Assuming you add this icon
+import { ExternalLinkIcon } from './icons/AppIcons';
 
+// --- THE FIX IS HERE: Defining the missing interface ---
 interface ResultProps {
   data: ComponentData;
   onReset: () => void;
 }
 
-// ... (ConfidenceBadge component remains the same)
 const ConfidenceBadge: React.FC<{ confidence: ComponentData['confidence'] }> = ({ confidence }) => {
     let bgColor = 'bg-gray-500';
     if (confidence === 'High') bgColor = 'bg-green-500';
@@ -20,7 +20,6 @@ const ConfidenceBadge: React.FC<{ confidence: ComponentData['confidence'] }> = (
         </span>
     );
 };
-
 
 const Result: React.FC<ResultProps> = ({ data, onReset }) => {
   return (
@@ -37,7 +36,6 @@ const Result: React.FC<ResultProps> = ({ data, onReset }) => {
         </div>
 
         <div className="space-y-6">
-          {/* Datasheet Link Button */}
           {data.datasheetUrl && (
             <div>
               <a
@@ -52,10 +50,44 @@ const Result: React.FC<ResultProps> = ({ data, onReset }) => {
             </div>
           )}
 
+          {/* New: Shopping Links Section */}
+          {data.shoppingLinks && data.shoppingLinks.length > 0 && (
+            <div>
+              <h2 className="text-xl font-semibold text-content-100 mb-2">Where to Buy</h2>
+              <div className="bg-base-300 p-4 rounded-lg space-y-2">
+                {data.shoppingLinks.map((link) => (
+                  <a
+                    key={link.url}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-3 bg-base-100 rounded-md hover:bg-brand-primary group transition-colors"
+                  >
+                    <div className="flex items-center">
+                      <ExternalLinkIcon />
+                      <span className="ml-3 font-semibold text-white">{link.vendor}</span>
+                    </div>
+                    {link.price && (
+                      <span className="text-sm font-mono text-green-400">{link.price}</span>
+                    )}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div>
             <h2 className="text-xl font-semibold text-content-100 mb-2">Specifications</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 bg-base-300 p-4 rounded-lg">
-              {/* ... (specifications mapping remains the same) */}
+              {data.specifications.map((spec) => (
+                <div key={spec.specName} className="flex justify-between border-b border-base-100 py-1">
+                  <span className="text-content-200 font-medium">{spec.specName}:</span>
+                  <span className="text-white text-right">{spec.specValue}</span>
+                </div>
+              ))}
+              {data.specifications.length === 0 && (
+                <p className="text-content-200 col-span-2">No specific specifications were identified.</p>
+              )}
             </div>
           </div>
           
