@@ -34,6 +34,7 @@ const AuthComponent: React.FC = () => {
       switch (err.code) {
         case 'auth/wrong-password':
         case 'auth/user-not-found':
+        case 'auth/invalid-credential':
           setError("Invalid email or password.");
           break;
         case 'auth/email-already-in-use':

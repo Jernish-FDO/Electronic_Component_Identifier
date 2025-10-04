@@ -60,7 +60,8 @@ const App: React.FC = () => {
         const newResult: ComponentData = { 
           ...data, 
           id: new Date().toISOString(),
-          userId: user.uid
+          userId: user.uid,
+          imageBase64: imageBase64 // ADDED: Save the image with the result
         };
         await addDoc(collection(db, 'users', user.uid, 'history'), newResult);
         setResultData(newResult);

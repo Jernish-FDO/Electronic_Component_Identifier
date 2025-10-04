@@ -2,7 +2,6 @@ import React from 'react';
 import { ComponentData } from '../types';
 import { ExternalLinkIcon } from './icons/AppIcons';
 
-// --- THE FIX IS HERE: Defining the missing interface ---
 interface ResultProps {
   data: ComponentData;
   onReset: () => void;
@@ -25,6 +24,18 @@ const Result: React.FC<ResultProps> = ({ data, onReset }) => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-base-100 p-4 sm:p-6">
       <div className="w-full max-w-2xl bg-base-200 rounded-xl shadow-2xl p-6 sm:p-8">
+        
+        {/* ADDED: Display the captured image */}
+        {data.imageBase64 && (
+          <div className="mb-6 flex justify-center bg-base-300 p-2 rounded-lg">
+            <img 
+              src={data.imageBase64} 
+              alt={data.name} 
+              className="rounded-md shadow-lg max-h-64 w-auto object-contain" 
+            />
+          </div>
+        )}
+
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-base-300 pb-4 mb-6">
           <div>
             <h1 className="text-3xl font-bold text-white">{data.name}</h1>
@@ -50,31 +61,7 @@ const Result: React.FC<ResultProps> = ({ data, onReset }) => {
             </div>
           )}
 
-          {/* New: Shopping Links Section */}
-          {data.shoppingLinks && data.shoppingLinks.length > 0 && (
-            <div>
-              <h2 className="text-xl font-semibold text-content-100 mb-2">Where to Buy</h2>
-              <div className="bg-base-300 p-4 rounded-lg space-y-2">
-                {data.shoppingLinks.map((link) => (
-                  <a
-                    key={link.url}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between p-3 bg-base-100 rounded-md hover:bg-brand-primary group transition-colors"
-                  >
-                    <div className="flex items-center">
-                      <ExternalLinkIcon />
-                      <span className="ml-3 font-semibold text-white">{link.vendor}</span>
-                    </div>
-                    {link.price && (
-                      <span className="text-sm font-mono text-green-400">{link.price}</span>
-                    )}
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* REMOVED: The "Where to Buy" / shoppingLinks section is gone */}
 
           <div>
             <h2 className="text-xl font-semibold text-content-100 mb-2">Specifications</h2>

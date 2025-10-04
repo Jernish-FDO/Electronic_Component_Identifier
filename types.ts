@@ -3,12 +3,7 @@ export interface Specification {
   specValue: string;
 }
 
-// New: Define a structure for shopping links
-export interface ShoppingLink {
-  vendor: string;
-  url: string;
-  price?: string; // Optional price
-}
+// The ShoppingLink interface has been removed.
 
 export interface ComponentData {
   id: string; 
@@ -19,5 +14,5 @@ export interface ComponentData {
   commonUsage: string;
   confidence: 'High' | 'Medium' | 'Low' | 'Uncertain';
   datasheetUrl?: string;
-  shoppingLinks?: ShoppingLink[]; // New: An array of shopping links
+  imageBase64?: string; // New: To store the captured image
 }

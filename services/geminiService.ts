@@ -1,11 +1,11 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { ComponentData } from '../types';
 
-if (!process.env.API_KEY) {
-    throw new Error("API_KEY environment variable not set");
+if (!import.meta.env.VITE_GEMINI_API_KEY) {
+    throw new Error("VITE_GEMINI_API_KEY environment variable not set");
 }
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
 const componentSchema = {
   type: Type.OBJECT,
@@ -27,27 +27,13 @@ const componentSchema = {
     commonUsage: { type: Type.STRING, description: "A brief summary of what this component is commonly used for." },
     confidence: { type: Type.STRING, description: "An assessment of the identification confidence: 'High', 'Medium', 'Low', or 'Uncertain'." },
     datasheetUrl: { type: Type.STRING, description: "A direct URL to the component's official PDF datasheet if available. Can be empty." },
-    // New: Schema for shopping links
-    shoppingLinks: {
-      type: Type.ARRAY,
-      description: "A list of shopping links for the component.",
-      items: {
-        type: Type.OBJECT,
-        properties: {
-          vendor: { type: Type.STRING, description: "The name of the vendor (e.g., 'Digi-Key', 'Mouser')." },
-          url: { type: Type.STRING, description: "The direct URL to the product page." },
-          price: { type: Type.STRING, description: "The approximate price, if available (e.g., '$0.75')." },
-        },
-        required: ['vendor', 'url']
-      }
-    }
   },
   required: ['name', 'type', 'specifications', 'commonUsage', 'confidence']
 };
 
-export const identifyComponent = async (base64Image: string): Promise<Omit<ComponentData, 'id' | 'userId'>> => {
-  // Updated: Prompt is now more detailed
-  const prompt = "Analyze the image of the electronic component. Identify it and provide its details according to the JSON schema. Find a direct URL to its PDF datasheet. Additionally, find up to 3 shopping links from major distributors like Digi-Key, Mouser, SparkFun, or Adafruit. If the component is unidentifiable, set confidence to 'Uncertain' and return empty arrays for links and specifications.";
+export const identifyComponent = async (base64Image: string): Promise<Omit<ComponentData, 'id' | 'userId' | 'imageBase64'>> => {
+  // Updated Prompt: No longer asks for shopping links.
+  const prompt = "Analyze the image of the electronic component. Identify it and provide its details according to the JSON schema. Find a direct URL to its PDF datasheet. If the component is unidentifiable, set confidence to 'Uncertain' and return empty arrays for specifications.";
 
   const imagePart = { inlineData: { mimeType: 'image/jpeg', data: base64Image.split(',')[1] } };
   const textPart = { text: prompt };
@@ -65,7 +51,7 @@ export const identifyComponent = async (base64Image: string): Promise<Omit<Compo
       throw new Error('Invalid data structure received from API');
     }
     
-    return parsedData as Omit<ComponentData, 'id' | 'userId'>;
+    return parsedData as Omit<ComponentData, 'id' | 'userId' | 'imageBase64'>;
 
   } catch (error) {
     console.error("Error calling Gemini API:", error);
