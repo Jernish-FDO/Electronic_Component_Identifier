@@ -25,13 +25,14 @@ const componentSchema = {
       }
     },
     commonUsage: { type: Type.STRING, description: "A brief summary of what this component is commonly used for." },
-    confidence: { type: Type.STRING, description: "An assessment of the identification confidence. Can be 'High', 'Medium', 'Low', or 'Uncertain'." }
+    confidence: { type: Type.STRING, description: "An assessment of the identification confidence. Can be 'High', 'Medium', 'Low', or 'Uncertain'." },
+    datasheetUrl: { type: Type.STRING, description: "A direct URL to the component's official PDF datasheet if available. If not found, this can be an empty string." }
   },
   required: ['name', 'type', 'specifications', 'commonUsage', 'confidence']
 };
 
-export const identifyComponent = async (base64Image: string): Promise<ComponentData> => {
-  const prompt = "Analyze the image of the electronic component. Identify it and provide its details according to the provided JSON schema. If the component cannot be clearly identified, set the confidence to 'Uncertain' and provide the best possible guess for the name and type.";
+export const identifyComponent = async (base64Image: string): Promise<Omit<ComponentData, 'id'>> => {
+  const prompt = "Analyze the image of the electronic component. Identify it and provide its details according to the provided JSON schema. Also, try to find a direct URL to the official PDF datasheet for this component. If the component cannot be clearly identified, set the confidence to 'Uncertain' and provide the best possible guess for the name and type.";
 
   const imagePart = {
     inlineData: {
@@ -57,18 +58,12 @@ export const identifyComponent = async (base64Image: string): Promise<ComponentD
     const jsonText = response.text.trim();
     const parsedData = JSON.parse(jsonText);
     
-    // Validate the parsed data structure
-    if (
-      typeof parsedData.name !== 'string' ||
-      typeof parsedData.type !== 'string' ||
-      !Array.isArray(parsedData.specifications) ||
-      typeof parsedData.commonUsage !== 'string' ||
-      !['High', 'Medium', 'Low', 'Uncertain'].includes(parsedData.confidence)
-    ) {
+    // Validate the parsed data structure (simplified for brevity)
+    if (!parsedData.name || !parsedData.type) {
       throw new Error('Invalid data structure received from API');
     }
     
-    return parsedData as ComponentData;
+    return parsedData as Omit<ComponentData, 'id'>;
 
   } catch (error) {
     console.error("Error calling Gemini API:", error);

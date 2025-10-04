@@ -1,18 +1,31 @@
-
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import Auth from './components/Auth';
 import Capture from './components/Capture';
 import Result from './components/Result';
+import History from './components/History';
 import { ComponentData } from './types';
 import { identifyComponent } from './services/geminiService';
 import Spinner from './components/Spinner';
 
-type View = 'auth' | 'capture' | 'loading' | 'result' | 'error';
+type View = 'auth' | 'capture' | 'loading' | 'result' | 'error' | 'history';
 
 const App: React.FC = () => {
   const [view, setView] = useState<View>('auth');
   const [resultData, setResultData] = useState<ComponentData | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [history, setHistory] = useState<ComponentData[]>([]);
+
+  useEffect(() => {
+    try {
+      const storedHistory = localStorage.getItem('componentHistory');
+      if (storedHistory) {
+        setHistory(JSON.parse(storedHistory));
+      }
+    } catch (error) {
+      console.error("Failed to load history from localStorage:", error);
+      setHistory([]);
+    }
+  }, []);
 
   const handleLogin = useCallback(() => {
     setView('capture');
@@ -26,7 +39,15 @@ const App: React.FC = () => {
           setErrorMessage("Could not confidently identify the component. Please try again with a clearer image.");
           setView('error');
       } else {
-          setResultData(data);
+          const newResult: ComponentData = { ...data, id: new Date().toISOString() };
+          setResultData(newResult);
+          
+          setHistory(prevHistory => {
+            const updatedHistory = [newResult, ...prevHistory];
+            localStorage.setItem('componentHistory', JSON.stringify(updatedHistory));
+            return updatedHistory;
+          });
+          
           setView('result');
       }
     } catch (error) {
@@ -41,14 +62,24 @@ const App: React.FC = () => {
     setErrorMessage('');
     setView('capture');
   }, []);
+  
+  const handleViewHistory = useCallback(() => {
+    setView('history');
+  }, []);
+
+  const handleViewHistoryItem = useCallback((item: ComponentData) => {
+    setResultData(item);
+    setView('result');
+  }, []);
 
   const renderView = () => {
     switch (view) {
       case 'auth':
         return <Auth onLogin={handleLogin} />;
       case 'capture':
-        return <Capture onIdentify={handleIdentification} />;
+        return <Capture onIdentify={handleIdentification} onViewHistory={handleViewHistory} />;
       case 'loading':
+        // --- FIX WAS HERE ---
         return (
           <div className="flex flex-col items-center justify-center min-h-screen bg-base-100 p-4">
             <Spinner />
@@ -57,7 +88,10 @@ const App: React.FC = () => {
         );
       case 'result':
         return resultData ? <Result data={resultData} onReset={handleReset} /> : null;
+      case 'history':
+        return <History items={history} onViewItem={handleViewHistoryItem} onBack={handleReset} />;
       case 'error':
+        // --- FIX WAS HERE ---
         return (
           <div className="flex flex-col items-center justify-center min-h-screen bg-base-100 p-4 text-center">
             <p className="text-xl text-red-400 mb-4">{errorMessage}</p>
