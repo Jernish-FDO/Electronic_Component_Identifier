@@ -1,13 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { User } from 'firebase/auth';
-import { Link } from 'react-router-dom';
-import { CameraIcon, UploadIcon, HistoryIcon, RetakeIcon, CheckIcon } from './icons/AppIcons';
+import { motion } from 'framer-motion';
+import AnimatedPage from './AnimatedPage';
+import { CameraIcon, UploadIcon, RetakeIcon, CheckIcon } from './icons/AppIcons';
 
-interface CaptureProps {
-  onIdentify: (imageBase64: string) => void;
-  errorMessage: string;
-}
-
+// ... (CameraView component remains the same)
 const CameraView: React.FC<{ onCapture: (dataUrl: string) => void; onExit: () => void; }> = ({ onCapture, onExit }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -91,7 +87,29 @@ const CameraView: React.FC<{ onCapture: (dataUrl: string) => void; onExit: () =>
   );
 };
 
+
+interface CaptureProps {
+  onIdentify: (imageBase64: string) => void;
+  errorMessage: string;
+}
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1 },
+};
+
 const Capture: React.FC<CaptureProps> = ({ onIdentify, errorMessage }) => {
+  // ... (keep existing state and handlers)
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -125,47 +143,63 @@ const Capture: React.FC<CaptureProps> = ({ onIdentify, errorMessage }) => {
     if (files && files.length > 0) processFile(files[0]);
   };
 
+
   if (isCameraOpen) {
     return <CameraView onCapture={onIdentify} onExit={() => setIsCameraOpen(false)} />;
   }
 
   return (
-    <div className="min-h-[calc(100vh-56px)] flex flex-col items-center justify-center bg-base-100 p-4">
-      <div className="text-center">
-        <h1 className="text-3xl sm:text-4xl font-bold text-content-100">Identify a Component</h1>
-        <p className="mt-2 text-content-200">Use your camera or upload an image.</p>
-      </div>
-
-      {errorMessage && (
-        <div className="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-center">
-          <p>{errorMessage}</p>
+    <AnimatedPage>
+      <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center bg-base-100 p-4">
+        <div className="text-center">
+          <h1 className="text-3xl sm:text-4xl font-bold text-content-100">Identify a Component</h1>
+          <p className="mt-2 text-content-200">Use your camera or upload an image.</p>
         </div>
-      )}
 
-      <div
-        onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragOver={handleDragOver} onDrop={handleDrop}
-        className={`mt-8 w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-6 transition-all duration-300 ${isDragging ? 'scale-105' : ''}`}
-      >
-        <button
-          onClick={() => setIsCameraOpen(true)}
-          className="group flex flex-col items-center justify-center w-full h-48 bg-base-200 rounded-lg shadow-lg hover:bg-brand-primary transition-all duration-300 transform hover:-translate-y-1"
+        {errorMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-center"
+          >
+            <p>{errorMessage}</p>
+          </motion.div>
+        )}
+
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragOver={handleDragOver} onDrop={handleDrop}
+          className={`mt-8 w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-6 transition-all duration-300 ${isDragging ? 'scale-105' : ''}`}
         >
-          <CameraIcon />
-          <span className="mt-4 text-lg font-semibold text-content-100 group-hover:text-white">Use Camera</span>
-        </button>
-        <div
+          <motion.button
+            variants={itemVariants}
+            whileHover={{ scale: 1.05, y: -5 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setIsCameraOpen(true)}
+            className="group flex flex-col items-center justify-center w-full h-48 bg-base-200 rounded-lg shadow-lg hover:bg-brand-primary"
+          >
+            <CameraIcon />
+            <span className="mt-4 text-lg font-semibold text-content-100 group-hover:text-white">Use Camera</span>
+          </motion.button>
+          <motion.div
+            variants={itemVariants}
+            whileHover={{ scale: 1.05, y: -5 }}
+            whileTap={{ scale: 0.95 }}
             onClick={handleUploadClick}
-            className={`group flex flex-col items-center justify-center w-full h-48 bg-base-200 rounded-lg shadow-lg transition-all duration-300 transform hover:-translate-y-1 cursor-pointer
+            className={`group flex flex-col items-center justify-center w-full h-48 bg-base-200 rounded-lg shadow-lg cursor-pointer
             ${isDragging ? 'bg-blue-500 border-4 border-dashed border-white' : 'hover:bg-brand-secondary'}`}
-        >
-          <UploadIcon />
-          <span className="mt-4 text-lg font-semibold text-content-100 group-hover:text-white">
-            {isDragging ? 'Drop Image Here' : 'Upload Image'}
-          </span>
-        </div>
-        <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
+          >
+            <UploadIcon />
+            <span className="mt-4 text-lg font-semibold text-content-100 group-hover:text-white">
+              {isDragging ? 'Drop Image Here' : 'Upload Image'}
+            </span>
+          </motion.div>
+          <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
+        </motion.div>
       </div>
-    </div>
+    </AnimatedPage>
   );
 };
 

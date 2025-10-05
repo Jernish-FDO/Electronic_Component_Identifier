@@ -3,10 +3,12 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword 
 } from 'firebase/auth';
+import { motion } from 'framer-motion';
 import { auth } from '../services/firebase';
 import Spinner from './Spinner';
 
 const AuthComponent: React.FC = () => {
+  // ... (keep existing state and handlers)
   const [isLoginView, setIsLoginView] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -52,9 +54,15 @@ const AuthComponent: React.FC = () => {
     }
   };
 
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-100 p-4">
-      <div className="w-full max-w-sm mx-auto">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-sm mx-auto"
+      >
         <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-content-100">Component Identifier</h1>
             <p className="mt-2 text-content-200">{isLoginView ? "Sign in to continue" : "Create an account"}</p>
@@ -91,13 +99,15 @@ const AuthComponent: React.FC = () => {
           {error && <p className="text-red-500 text-xs italic mb-4">{error}</p>}
           
           <div className="flex items-center justify-between">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isLoading}
               className="bg-brand-primary hover:bg-brand-secondary text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full flex justify-center items-center disabled:opacity-50"
             >
               {isLoading ? <Spinner /> : (isLoginView ? 'Sign In' : 'Sign Up')}
-            </button>
+            </motion.button>
           </div>
         </form>
         <p className="text-center text-content-200 text-sm">
@@ -106,7 +116,7 @@ const AuthComponent: React.FC = () => {
             {isLoginView ? 'Sign Up' : 'Sign In'}
           </button>
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 };

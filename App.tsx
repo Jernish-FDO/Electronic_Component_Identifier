@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { collection, addDoc, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { auth, db } from './services/firebase';
 import AuthComponent from './components/Auth';
 import Capture from './components/Capture';
@@ -81,26 +82,36 @@ const App: React.FC = () => {
     navigate('/result');
   }, [navigate]);
 
-  if (isProcessing) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-base-100 p-4">
-        <Spinner />
-        <p className="mt-4 text-content-200">Identifying component...</p>
-      </div>
-    );
-  }
-
   return (
-    <Routes>
-      <Route path="/login" element={<AuthComponent />} />
-      <Route element={<ProtectedRoute user={user} isAuthLoading={isAuthLoading} />}>
-        <Route element={<Layout user={user} />}>
-          <Route path="/" element={<Capture onIdentify={handleIdentification} errorMessage={errorMessage} />} />
-          <Route path="/history" element={<History items={history} onViewItem={handleViewHistoryItem} />} />
-          <Route path="/result" element={resultData ? <Result data={resultData} /> : <Navigate to="/" />} />
-        </Route>
-      </Route>
-    </Routes>
+    <>
+      <AnimatePresence mode="wait">
+        {isProcessing && (
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-base-100 bg-opacity-90"
+          >
+            <Spinner />
+            <p className="mt-4 text-content-200">Identifying component...</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route path="/login" element={<AuthComponent />} />
+          <Route element={<ProtectedRoute user={user} isAuthLoading={isAuthLoading} />}>
+            <Route element={<Layout user={user} />}>
+              <Route path="/" element={<Capture onIdentify={handleIdentification} errorMessage={errorMessage} />} />
+              <Route path="/history" element={<History items={history} onViewItem={handleViewHistoryItem} />} />
+              <Route path="/result" element={resultData ? <Result data={resultData} /> : <Navigate to="/" />} />
+            </Route>
+          </Route>
+        </Routes>
+      </AnimatePresence>
+    </>
   );
 };
 
