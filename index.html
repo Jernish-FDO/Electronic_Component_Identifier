@@ -19,18 +19,49 @@
               sans: ['Roboto Mono', 'monospace'],
             },
             colors: {
-              'brand-primary': '#f87171', 
-              'brand-secondary': '#ef4444',
-              'base-100': '#ffffff',
-              'base-200': '#f9fafb',
-              'base-300': '#e5e7eb',
-              'content-100': '#111827',
-              'content-200': '#6b7280',
+              'brand-primary': '#00F5A0',      // vibrant green for CTAs
+              'brand-secondary': '#E024D9',    // vibrant magenta for highlights
+              'base-100': '#0D0F1E',          // main page background
+              'base-200': '#1E1E3C',          // card background
+              'base-300': '#13132B',          // darker nested elements bg
+              'content-100': '#E0E0FF',        // primary text
+              'content-200': '#8A8AAB',        // secondary text
+              'destructive': '#FF4757',       // vibrant red for warnings/sign out
             },
           },
         },
       }
     </script>
+    <style>
+      /* Glassmorphism utility class */
+      .glass-card {
+        background: rgba(30, 30, 60, 0.5); /* Corresponds to base-200 with transparency */
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(224, 224, 255, 0.1); /* content-100 with transparency */
+      }
+      
+      .glass-card-nested {
+        background: rgba(19, 19, 43, 0.6); /* Corresponds to base-300 with transparency */
+        border: 1px solid rgba(224, 224, 255, 0.05);
+      }
+
+      /* Custom scrollbar to match the theme */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #13132B;
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: #3F3F7A; /* A muted purple from the theme */
+        border-radius: 10px;
+        border: 2px solid #13132B;
+      }
+       ::-webkit-scrollbar-thumb:hover {
+        background-color: #E024D9; /* brand-secondary on hover */
+      }
+    </style>
   <script type="importmap">
 {
   "imports": {

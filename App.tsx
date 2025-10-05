@@ -10,7 +10,7 @@ import Result from './components/Result';
 import History from './components/History';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
-import { ComponentData } from './types';
+import { ComponentData, AnalysisLevel } from './types'; // Import AnalysisLevel
 import { identifyComponent } from './services/geminiService';
 import Spinner from './components/Spinner';
 
@@ -50,14 +50,17 @@ const App: React.FC = () => {
     }
   }, [user]);
 
-  const handleIdentification = useCallback(async (imageBase64: string) => {
+  // UPDATED: handleIdentification now accepts the analysis level
+  const handleIdentification = useCallback(async (imageBase64: string, level: AnalysisLevel) => {
     if (!user) return;
     setIsProcessing(true);
     setErrorMessage('');
     try {
-      const data = await identifyComponent(imageBase64);
+      // Pass the level to the AI service
+      const data = await identifyComponent(imageBase64, level);
+      
       if (data.confidence === 'Uncertain') {
-        setErrorMessage("Could not confidently identify the component.");
+        setErrorMessage(data.commonUsage || "Could not confidently identify the component.");
       } else {
         const newResult: ComponentData = {
           ...data,
@@ -67,11 +70,13 @@ const App: React.FC = () => {
         };
         await addDoc(collection(db, 'users', user.uid, 'history'), newResult);
         setResultData(newResult);
+        setErrorMessage('');
         navigate('/result');
       }
     } catch (error) {
       console.error('Identification or Firestore write failed:', error);
-      setErrorMessage('An unexpected error occurred. Please try again.');
+      const message = error instanceof Error ? error.message : 'An unexpected error occurred.';
+      setErrorMessage(message);
     } finally {
       setIsProcessing(false);
     }
@@ -92,10 +97,10 @@ const App: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-base-100 bg-opacity-90"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-base-100/90 backdrop-blur-sm"
           >
             <Spinner />
-            <p className="mt-4 text-content-200">Identifying component...</p>
+            <p className="mt-4 text-content-100">Analyzing component...</p>
           </motion.div>
         )}
       </AnimatePresence>

@@ -68,7 +68,7 @@ const AuthComponent: React.FC = () => {
             <p className="mt-2 text-content-200">{isLoginView ? "Sign in to continue" : "Create an account"}</p>
         </div>
 
-        <form onSubmit={handleAuthAction} className="bg-base-200 shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
+        <form onSubmit={handleAuthAction} className="glass-card rounded-lg px-8 pt-6 pb-8 mb-4">
           <div className="mb-4">
             <label className="block text-content-200 text-sm font-bold mb-2" htmlFor="email">
               Email
@@ -79,7 +79,7 @@ const AuthComponent: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="your@email.com"
-              className="shadow-sm appearance-none border rounded w-full py-2 px-3 bg-base-300 text-content-100 leading-tight focus:outline-none focus:shadow-outline"
+              className="appearance-none border border-white/10 rounded w-full py-2 px-3 bg-base-300 text-content-100 leading-tight focus:outline-none focus:shadow-outline focus:border-brand-primary"
             />
           </div>
           <div className="mb-6">
@@ -92,19 +92,19 @@ const AuthComponent: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="shadow-sm appearance-none border rounded w-full py-2 px-3 bg-base-300 text-content-100 leading-tight focus:outline-none focus:shadow-outline"
+              className="appearance-none border border-white/10 rounded w-full py-2 px-3 bg-base-300 text-content-100 leading-tight focus:outline-none focus:shadow-outline focus:border-brand-primary"
             />
           </div>
           
-          {error && <p className="text-red-500 text-xs italic mb-4">{error}</p>}
+          {error && <p className="text-destructive text-xs italic mb-4">{error}</p>}
           
           <div className="flex items-center justify-between">
             <motion.button
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.02, filter: 'brightness(1.2)' }}
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isLoading}
-              className="bg-brand-primary hover:bg-brand-secondary text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full flex justify-center items-center disabled:opacity-50"
+              className="bg-brand-primary text-base-300 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full flex justify-center items-center disabled:opacity-50 transition-all"
             >
               {isLoading ? <Spinner /> : (isLoginView ? 'Sign In' : 'Sign Up')}
             </motion.button>
@@ -112,7 +112,7 @@ const AuthComponent: React.FC = () => {
         </form>
         <p className="text-center text-content-200 text-sm">
           {isLoginView ? "Don't have an account?" : "Already have an account?"}
-          <button onClick={() => { setIsLoginView(!isLoginView); setError(null); }} className="font-bold text-brand-primary hover:text-brand-secondary ml-2">
+          <button onClick={() => { setIsLoginView(!isLoginView); setError(null); }} className="font-bold text-brand-primary hover:text-opacity-80 ml-2 transition-opacity">
             {isLoginView ? 'Sign Up' : 'Sign In'}
           </button>
         </p>

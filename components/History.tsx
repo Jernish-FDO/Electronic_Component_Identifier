@@ -27,16 +27,16 @@ const History: React.FC<HistoryProps> = ({ items, onViewItem }) => {
         <div className="w-full max-w-2xl">
           <h1 className="text-3xl font-bold text-content-100 text-center mb-6">Identification History</h1>
           
-          <div className="bg-base-200 rounded-lg shadow-xl">
+          <div className="glass-card rounded-lg">
             {items.length > 0 ? (
-              <motion.ul variants={listVariants} initial="hidden" animate="visible" className="divide-y divide-base-300">
-                {items.map((item) => (
-                  <motion.li key={item.id} variants={itemVariants}>
+              <motion.ul variants={listVariants} initial="hidden" animate="visible">
+                {items.map((item, index) => (
+                  <motion.li key={item.id} variants={itemVariants} className={`border-b border-white/10 ${index === items.length - 1 ? 'border-b-0' : ''}`}>
                     <motion.button 
                       onClick={() => onViewItem(item)}
-                      whileHover={{ backgroundColor: "#e5e7eb" }} // base-300
+                      whileHover={{ backgroundColor: "rgba(224, 224, 255, 0.1)" }}
                       whileTap={{ scale: 0.98 }}
-                      className="w-full flex items-center justify-between p-4 text-left"
+                      className="w-full flex items-center justify-between p-4 text-left transition-colors"
                     >
                       <div className="flex items-center gap-4">
                         {item.imageBase64 && <img src={item.imageBase64} alt={item.name} className="w-12 h-12 object-cover rounded-md bg-base-300" />}
@@ -60,7 +60,7 @@ const History: React.FC<HistoryProps> = ({ items, onViewItem }) => {
           <div className="mt-8 text-center">
             <Link
               to="/"
-              className="px-8 py-3 bg-brand-primary text-white font-bold rounded-lg shadow-md hover:bg-brand-secondary focus:outline-none"
+              className="inline-block px-8 py-3 bg-brand-primary text-base-300 font-bold rounded-lg shadow-md hover:brightness-125 focus:outline-none transition-all transform hover:scale-105"
             >
               Back to Scanner
             </Link>
