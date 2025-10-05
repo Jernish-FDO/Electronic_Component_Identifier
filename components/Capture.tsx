@@ -1,15 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { User, signOut } from 'firebase/auth';
-import { auth } from '../services/firebase';
+import { User } from 'firebase/auth';
+import { Link } from 'react-router-dom';
 import { CameraIcon, UploadIcon, HistoryIcon, RetakeIcon, CheckIcon } from './icons/AppIcons';
 
 interface CaptureProps {
-  user: User;
   onIdentify: (imageBase64: string) => void;
-  onViewHistory: () => void;
+  errorMessage: string;
 }
 
-// Sub-component for handling the live camera view and preview
 const CameraView: React.FC<{ onCapture: (dataUrl: string) => void; onExit: () => void; }> = ({ onCapture, onExit }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -18,12 +16,12 @@ const CameraView: React.FC<{ onCapture: (dataUrl: string) => void; onExit: () =>
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
 
   useEffect(() => {
-    if (capturedImage) return; // Don't restart camera if we are in preview mode
+    if (capturedImage) return;
 
     const startCamera = async () => {
       try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({ 
-          video: { facingMode: 'environment', width: 1920, height: 1080 } 
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment', width: 1920, height: 1080 }
         });
         setStream(mediaStream);
         if (videoRef.current) {
@@ -39,8 +37,7 @@ const CameraView: React.FC<{ onCapture: (dataUrl: string) => void; onExit: () =>
     return () => {
       stream?.getTracks().forEach(track => track.stop());
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [capturedImage]);
+  }, [capturedImage, stream]);
 
   const handleCapture = () => {
     if (videoRef.current && canvasRef.current) {
@@ -53,7 +50,7 @@ const CameraView: React.FC<{ onCapture: (dataUrl: string) => void; onExit: () =>
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
         const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
         setCapturedImage(dataUrl);
-        stream?.getTracks().forEach(track => track.stop()); // Stop stream to show preview
+        stream?.getTracks().forEach(track => track.stop());
       }
     }
   };
@@ -94,13 +91,11 @@ const CameraView: React.FC<{ onCapture: (dataUrl: string) => void; onExit: () =>
   );
 };
 
-
-const Capture: React.FC<CaptureProps> = ({ user, onIdentify, onViewHistory }) => {
+const Capture: React.FC<CaptureProps> = ({ onIdentify, errorMessage }) => {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSignOut = () => signOut(auth);
   const handleUploadClick = () => fileInputRef.current?.click();
 
   const processFile = (file: File) => {
@@ -121,57 +116,36 @@ const Capture: React.FC<CaptureProps> = ({ user, onIdentify, onViewHistory }) =>
     if (file) processFile(file);
   };
 
-  const handleDragEnter = (e: React.DragEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-  };
-  
-  const handleDragOver = (e: React.DragEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-    
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true); };
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); };
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); e.stopPropagation(); };
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault(); e.stopPropagation(); setIsDragging(false);
     const files = e.dataTransfer.files;
-    if (files && files.length > 0) {
-      processFile(files[0]);
-    }
+    if (files && files.length > 0) processFile(files[0]);
   };
-
 
   if (isCameraOpen) {
     return <CameraView onCapture={onIdentify} onExit={() => setIsCameraOpen(false)} />;
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-base-100 p-4 relative">
-      <div className="absolute top-4 right-4 text-sm flex items-center gap-3">
-        <span className="text-content-200 hidden sm:inline">{user.email}</span>
-        <button 
-          onClick={handleSignOut} 
-          className="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700"
-        >
-          Sign Out
-        </button>
-      </div>
-
+    <div className="min-h-[calc(100vh-56px)] flex flex-col items-center justify-center bg-base-100 p-4">
       <div className="text-center">
-        <h1 className="text-3xl sm:text-4xl font-bold text-content-100">Identify Component</h1>
-        <p className="mt-2 text-content-200">Use your camera, upload an image, or view your history.</p>
+        <h1 className="text-3xl sm:text-4xl font-bold text-content-100">Identify a Component</h1>
+        <p className="mt-2 text-content-200">Use your camera or upload an image.</p>
       </div>
 
-      <div className="mt-12 w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-6">
+      {errorMessage && (
+        <div className="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-center">
+          <p>{errorMessage}</p>
+        </div>
+      )}
+
+      <div
+        onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragOver={handleDragOver} onDrop={handleDrop}
+        className={`mt-8 w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-6 transition-all duration-300 ${isDragging ? 'scale-105' : ''}`}
+      >
         <button
           onClick={() => setIsCameraOpen(true)}
           className="group flex flex-col items-center justify-center w-full h-48 bg-base-200 rounded-lg shadow-lg hover:bg-brand-primary transition-all duration-300 transform hover:-translate-y-1"
@@ -179,37 +153,17 @@ const Capture: React.FC<CaptureProps> = ({ user, onIdentify, onViewHistory }) =>
           <CameraIcon />
           <span className="mt-4 text-lg font-semibold text-content-100 group-hover:text-white">Use Camera</span>
         </button>
-
-        <button
-          onClick={handleUploadClick}
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-          className={`group flex flex-col items-center justify-center w-full h-48 bg-base-200 rounded-lg shadow-lg transition-all duration-300 transform hover:-translate-y-1
-            ${isDragging ? 'scale-105 bg-blue-500 border-4 border-dashed border-white' : 'hover:bg-brand-secondary'}`}
+        <div
+            onClick={handleUploadClick}
+            className={`group flex flex-col items-center justify-center w-full h-48 bg-base-200 rounded-lg shadow-lg transition-all duration-300 transform hover:-translate-y-1 cursor-pointer
+            ${isDragging ? 'bg-blue-500 border-4 border-dashed border-white' : 'hover:bg-brand-secondary'}`}
         >
           <UploadIcon />
           <span className="mt-4 text-lg font-semibold text-content-100 group-hover:text-white">
             {isDragging ? 'Drop Image Here' : 'Upload Image'}
           </span>
-        </button>
-
-        <button
-          onClick={onViewHistory}
-          className="group flex flex-col items-center justify-center w-full h-48 bg-base-200 rounded-lg shadow-lg hover:bg-gray-500 transition-all duration-300 transform hover:-translate-y-1"
-        >
-          <HistoryIcon />
-          <span className="mt-4 text-lg font-semibold text-content-100 group-hover:text-white">View History</span>
-        </button>
-
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          accept="image/*"
-          className="hidden"
-        />
+        </div>
+        <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
       </div>
     </div>
   );

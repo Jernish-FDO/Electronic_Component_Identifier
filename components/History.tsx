@@ -1,16 +1,16 @@
 import React from 'react';
 import { ComponentData } from '../types';
-import { ChevronRightIcon } from './icons/AppIcons'; // Assuming you add this icon
+import { Link } from 'react-router-dom';
+import { ChevronRightIcon } from './icons/AppIcons';
 
 interface HistoryProps {
   items: ComponentData[];
   onViewItem: (item: ComponentData) => void;
-  onBack: () => void;
 }
 
-const History: React.FC<HistoryProps> = ({ items, onViewItem, onBack }) => {
+const History: React.FC<HistoryProps> = ({ items, onViewItem }) => {
   return (
-    <div className="min-h-screen flex flex-col items-center bg-base-100 p-4 sm:p-6">
+    <div className="min-h-[calc(100vh-56px)] flex flex-col items-center bg-base-100 p-4 sm:p-6">
       <div className="w-full max-w-2xl">
         <h1 className="text-3xl font-bold text-content-100 text-center mb-6">Identification History</h1>
         
@@ -19,13 +19,16 @@ const History: React.FC<HistoryProps> = ({ items, onViewItem, onBack }) => {
             <ul className="divide-y divide-base-300">
               {items.map((item) => (
                 <li key={item.id}>
-                  <button 
+                  <button
                     onClick={() => onViewItem(item)}
                     className="w-full flex items-center justify-between p-4 hover:bg-base-300 transition-colors text-left"
                   >
-                    <div>
-                      <p className="font-semibold text-lg text-white">{item.name}</p>
-                      <p className="text-sm text-content-200">{item.type}</p>
+                    <div className="flex items-center gap-4">
+                      {item.imageBase64 && <img src={item.imageBase64} alt={item.name} className="w-12 h-12 object-cover rounded-md bg-base-300" />}
+                      <div>
+                        <p className="font-semibold text-lg text-content-100">{item.name}</p>
+                        <p className="text-sm text-content-200">{item.type}</p>
+                      </div>
                     </div>
                     <ChevronRightIcon />
                   </button>
@@ -40,12 +43,12 @@ const History: React.FC<HistoryProps> = ({ items, onViewItem, onBack }) => {
         </div>
 
         <div className="mt-8 text-center">
-          <button
-            onClick={onBack}
+          <Link
+            to="/"
             className="px-8 py-3 bg-brand-primary text-white font-bold rounded-lg shadow-md hover:bg-brand-secondary focus:outline-none"
           >
             Back to Scanner
-          </button>
+          </Link>
         </div>
       </div>
     </div>
