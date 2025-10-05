@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 export const CircuitBoardIcon: React.FC = () => (
@@ -36,8 +35,6 @@ export const CaptureIcon: React.FC = () => (
     </svg>
 );
 
-// Add these new icons to your existing AppIcons.tsx file
-
 export const HistoryIcon: React.FC = () => (
     <svg className="w-16 h-16 text-content-200 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -65,5 +62,18 @@ export const ExternalLinkIcon: React.FC = () => (
 export const ChevronRightIcon: React.FC = () => (
     <svg className="w-6 h-6 text-content-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+    </svg>
+);
+
+// NEW ICONS
+export const HamburgerIcon: React.FC = () => (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+    </svg>
+);
+
+export const CloseIcon: React.FC = () => (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
     </svg>
 );

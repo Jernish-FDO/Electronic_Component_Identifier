@@ -1,56 +1,86 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { User, signOut } from 'firebase/auth';
 import { NavLink, Link } from 'react-router-dom';
 import { auth } from '../services/firebase';
-import { CircuitBoardIcon } from './icons/AppIcons';
+import { CircuitBoardIcon, HamburgerIcon, CloseIcon } from './icons/AppIcons';
 
 interface NavbarProps {
   user: User | null;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ user }) => {
-  const handleSignOut = () => signOut(auth);
+  const [isOpen, setIsOpen] = useState(false);
+  const handleSignOut = () => {
+    signOut(auth);
+    setIsOpen(false);
+  };
 
   const activeLinkStyle = {
     backgroundColor: '#f87171', // brand-primary
     color: 'white',
   };
 
+  const navLinkClass = "px-3 py-2 rounded-md text-sm font-medium text-content-200 hover:bg-brand-primary hover:text-white transition-colors";
+  const mobileNavLinkClass = "block px-3 py-2 rounded-md text-base font-medium text-content-200 hover:bg-brand-primary hover:text-white transition-colors";
+
   return (
-    <nav className="bg-base-200 shadow-md px-4 py-2">
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <Link to="/" className="flex items-center gap-2 text-xl font-bold text-content-100">
-          <CircuitBoardIcon />
-          <span>Component ID</span>
-        </Link>
-        <div className="flex items-center gap-4">
-          <NavLink
-            to="/"
-            style={({ isActive }) => (isActive ? activeLinkStyle : undefined)}
-            className="px-3 py-2 rounded-md text-sm font-medium text-content-200 hover:bg-brand-primary hover:text-white transition-colors"
-          >
-            Scanner
-          </NavLink>
-          <NavLink
-            to="/history"
-            style={({ isActive }) => (isActive ? activeLinkStyle : undefined)}
-            className="px-3 py-2 rounded-md text-sm font-medium text-content-200 hover:bg-brand-primary hover:text-white transition-colors"
-          >
-            History
-          </NavLink>
+    <nav className="bg-base-200 shadow-md">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center">
+            <Link to="/" className="flex-shrink-0 flex items-center gap-2 text-xl font-bold text-content-100" onClick={() => setIsOpen(false)}>
+              <CircuitBoardIcon />
+              <span>Component ID</span>
+            </Link>
+          </div>
+          <div className="hidden md:block">
+            <div className="ml-10 flex items-baseline space-x-4">
+              <NavLink to="/" style={({ isActive }) => (isActive ? activeLinkStyle : undefined)} className={navLinkClass}>Scanner</NavLink>
+              <NavLink to="/history" style={({ isActive }) => (isActive ? activeLinkStyle : undefined)} className={navLinkClass}>History</NavLink>
+            </div>
+          </div>
+          <div className="hidden md:block">
+            {user && (
+              <div className="ml-4 flex items-center md:ml-6 gap-3">
+                <span className="text-content-200 text-sm">{user.email}</span>
+                <button onClick={handleSignOut} className="px-3 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700">
+                  Sign Out
+                </button>
+              </div>
+            )}
+          </div>
+          <div className="-mr-2 flex md:hidden">
+            <button onClick={() => setIsOpen(!isOpen)} className="bg-base-300 inline-flex items-center justify-center p-2 rounded-md text-content-200 hover:text-white hover:bg-brand-primary focus:outline-none">
+              <span className="sr-only">Open main menu</span>
+              {isOpen ? <CloseIcon /> : <HamburgerIcon />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile menu, show/hide based on menu state. */}
+      {isOpen && (
+        <div className="md:hidden" id="mobile-menu">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <NavLink to="/" onClick={() => setIsOpen(false)} style={({ isActive }) => (isActive ? activeLinkStyle : undefined)} className={mobileNavLinkClass}>Scanner</NavLink>
+            <NavLink to="/history" onClick={() => setIsOpen(false)} style={({ isActive }) => (isActive ? activeLinkStyle : undefined)} className={mobileNavLinkClass}>History</NavLink>
+          </div>
           {user && (
-            <div className="flex items-center gap-3">
-              <span className="text-content-200 text-sm hidden sm:inline">{user.email}</span>
-              <button
-                onClick={handleSignOut}
-                className="px-3 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700"
-              >
-                Sign Out
-              </button>
+            <div className="pt-4 pb-3 border-t border-base-300">
+              <div className="flex items-center px-5">
+                <div className="ml-3">
+                  <div className="text-base font-medium leading-none text-content-100">{user.email}</div>
+                </div>
+              </div>
+              <div className="mt-3 px-2 space-y-1">
+                <button onClick={handleSignOut} className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-content-200 hover:text-white hover:bg-red-600">
+                  Sign Out
+                </button>
+              </div>
             </div>
           )}
         </div>
-      </div>
+      )}
     </nav>
   );
 };

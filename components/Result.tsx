@@ -22,7 +22,7 @@ const ConfidenceBadge: React.FC<{ confidence: ComponentData['confidence'] }> = (
 
 const Result: React.FC<ResultProps> = ({ data }) => {
   return (
-    <div className="min-h-[calc(100vh-56px)] flex flex-col items-center justify-center bg-base-100 p-4 sm:p-6">
+    <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center bg-base-100 p-4 sm:p-6">
       <div className="w-full max-w-2xl bg-base-200 rounded-xl shadow-2xl p-6 sm:p-8">
         
         {data.imageBase64 && (
@@ -64,7 +64,7 @@ const Result: React.FC<ResultProps> = ({ data }) => {
             <h2 className="text-xl font-semibold text-content-100 mb-2">Specifications</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 bg-base-300 p-4 rounded-lg">
               {data.specifications.map((spec) => (
-                <div key={spec.specName} className="flex justify-between border-b border-gray-700 py-1">
+                <div key={spec.specName} className="flex justify-between border-b border-base-100 py-1">
                   <span className="text-content-200 font-medium">{spec.specName}:</span>
                   <span className="text-content-100 text-right">{spec.specValue}</span>
                 </div>
